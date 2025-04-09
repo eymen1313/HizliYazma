@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Textbox Örneği</title>
+    <style>
+        #textbox {
+            position: absolute;
+            width: 1200px;
+            height: 50px;
+            font-size: 50px;
+            top: 450px;
+        }
+        #score {
+            font-size: 30px;
+            position: absolute;
+            top: 520px;
+        }
+        #word {
+            font-size: 100px;
+            position: absolute;
+            top: 250px;
+        }
+        #time {
+            font-size: 30px;
+            position: absolute;
+            top: 600px;
+            left: 10px;
+        }
+        #congratulations {
+            font-size: 50px;
+            position: absolute;
+            top: 700px;
+            left: 200px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="word">Kelime</h1>
+    <input type="text" id="textbox" name="textbox" placeholder="Buraya yazınız...">
+    <div id="score">Puan: 0</div>
+    <div id="time">Süre: 60</div>
+    <div id="congratulations">Tebrikler!</div>
+
+    <script>
+        const kelimeler = [
+            "elma", "araba", "bilgisayar", "kitap", "okul", "gölge", "güneş", "telefon", "baba", "anne",
+            "çalışmak", "yazmak", "okumak", "deniz", "dağ", "göl", "kara", "beyaz", "güzel", "üzüm",
+            "kar", "ay", "gözlük", "gül", "yıldız", "bütün", "kendi", "dost", "ses", "sesli", "yavaş", 
+            "hızlı", "korku", "beyin", "yüzme", "oyun", "savaş", "düşman", "arkadaş", "eğitim", "zihin",
+            "sağlık", "yaşam", "doğa", "yemek", "tat", "zeytin", "salata", "cüzdan", "iş", "şirket", 
+            "müzik", "gitar", "piyanist", "şarkı", "masal", "hayvan", "kuş", "balık", "kedi", "köpek", 
+            "sabah", "akşam", "vakit", "saat", "tarih", "dünya", "evren", "gizli", "bilim", "keşif",
+            "matematik", "fizik", "kimya", "yeni", "eski", "dönem", "zaman", "gün", "ay", "yıl", "sezon",
+            "spor", "futbol", "basketbol", "voleybol", "yüzme", "tenis", "koşu", "fiziksel", "efe",
+            "beyin", "bilinç", "gelişim", "insan", "toplum", "özgürlük", "adalet", "hukuk", "başarı", 
+            "zafer", "ali","testis", "purna", "kaka", "deniz","mentos","umut", "zaman", "içinde", "zenci", 
+            "börek", "ocak", "şubat", "pipi", "krem", "bellek", "kral", "eymen"
+
+        ];
+
+        let puan = 0;
+        let zaman = 60;
+        let oyunAktif = true;
+        let zamanBasladi = false;
+        
+        let k1
+        let k2
+        let k3
+
+        function rastgeleKelime() {
+            if (k1 == undefined) {
+                k1 = kelimeler[Math.floor(Math.random() * kelimeler.length)];
+                k2 = kelimeler[Math.floor(Math.random() * kelimeler.length)];
+                k3 = kelimeler[Math.floor(Math.random() * kelimeler.length)];
+                document.getElementById('word').textContent = k1 + " | " + k2 + " | " + k3;
+                return k1;
+            }else {
+                k1 = k2
+                k2 = k3
+                k3 = kelimeler[Math.floor(Math.random() * kelimeler.length)];
+                document.getElementById('word').textContent = k1 + " | " + k2 + " | " + k3;
+                return k1;
+            }
+        }
+
+        let hedefKelime = rastgeleKelime();
+
+        function başlaSüre() {
+            const timer = setInterval(function () {
+                if (oyunAktif) {
+                    zaman--;
+                    document.getElementById('time').textContent = `Süre: ${zaman}`;
+                    if (zaman === 0) {
+                        oyunAktif = false;
+                        clearInterval(timer);
+                        document.getElementById('textbox').disabled = true; // Metin kutusunu devre dışı bırak
+                        document.getElementById('congratulations').style.display = 'block'; // Tebrik yazısını göster
+                        document.getElementById("congratulations").innerHTML = `Tebrikler! Skorun ${puan}`
+                        document.getElementById('score').style.display = 'none';
+                    }
+                }
+            }, 1000);
+        }
+
+        document.getElementById('textbox').addEventListener('input', function () {
+            // Süreyi başlatmak için ilk yazı girildiğinde
+            if (!zamanBasladi) {
+                başlaSüre();
+                zamanBasladi = true; // Süre başlatıldı
+            }
+
+            const kullaniciKelimesi = document.getElementById('textbox').value;
+
+            if (oyunAktif && kullaniciKelimesi === hedefKelime) {
+                puan++;
+                document.getElementById('score').textContent = `Puan: ${puan}`;
+                hedefKelime = rastgeleKelime(); // Hedef kelimeyi değiştir
+                document.getElementById('textbox').value = ''; // Metin kutusunu sıfırla
+            }
+
+            if (hedefKelime.startsWith(kullaniciKelimesi)) {
+                //console.log("TRUE")
+                document.getElementById('word').style.color = "green"
+            }else {
+                document.getElementById('word').style.color = "red"
+            }
+
+        });
+    </script>
+</body>
+</html>
